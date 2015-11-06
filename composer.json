@@ -2,7 +2,7 @@
     "name": "spesalvi/razorpay-hypermedia-client",
     "description": "Hypermedia client for github api",
     "require": {
-        "php": ">=5.3.0",
-        "guzzlehttp/guzzle": "^3.8"
+        "php": ">=5.5.0",
+        "guzzlehttp/guzzle": "~6.0"
     }
 }
