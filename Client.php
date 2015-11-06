@@ -30,7 +30,9 @@ class Client implements \ArrayAccess
 	
 	public function __get($var)
 	{
-			
+		if(isset($this->_apis[$var]))
+			return $this->_apis[$var];
+		return null;
 	}
 
 	public function __call($name, $arguments)
@@ -81,4 +83,8 @@ $user = $client->user('spesalvi');
 
 $repos = $user->repos();
 
-var_dump($repos[0]);
+$firstRepo = $repos[0];
+
+echo $firstRepo->name . "\n";
+
+echo $firstRepo->full_name . "\n";
