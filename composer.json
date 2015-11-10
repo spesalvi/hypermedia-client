@@ -5,6 +5,11 @@
         "guzzlehttp/guzzle": "^6.1",
         "php": "^5.5.0"
     },
+    "autoload": {
+	    "psr-0" : {
+		    "Razorpay\\Hypermedia\\Client" : "src"
+	    }
+    },
     "license": "MIT",
     "authors": [
         {
