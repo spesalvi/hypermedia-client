@@ -1,6 +1,8 @@
 <?php
 
 require_once 'src/Razorpay/Hypermedia/Client.php';
+require_once 'src/Razorpay/Hypermedia/Paginator/Page.php';
+require_once 'src/Razorpay/Hypermedia/Paginator/Paginator.php';
 require_once 'vendor/autoload.php';
 
 

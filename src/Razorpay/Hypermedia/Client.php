@@ -1,7 +1,8 @@
 <?php
 
 namespace Razorpay\Hypermedia;
-require_once 'LinkParser.php';
+require_once 'Paginator/Page.php';
+require_once 'Paginator/Paginator.php';
 
 use Guzzle\Http;
 class Client implements \ArrayAccess
@@ -92,7 +93,7 @@ class Client implements \ArrayAccess
 		if(!$linkHeader && is_array($this->_apis))
 			return 1;
 
-		$this->_paginator = New \Paginatior($linkHeader[0]);
+		$this->_paginator = New Paginator\Paginator($linkHeader[0]);
 		return $this->_paginator->getNumOfPages();
 	}
 
