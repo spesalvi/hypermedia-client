@@ -1,5 +1,5 @@
 {
-    "name": "robert/hypermedia-client",
+    "name": "spesalvi/hypermedia-client",
     "description": "Created for demoing with razorpay. Not for production use.",
     "require": {
         "guzzlehttp/guzzle": "^6.1",
