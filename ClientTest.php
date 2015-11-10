@@ -35,7 +35,9 @@ $user3 = $client3->user('nzakas');
 $repos3 = $user3->repos();
 
 $firstRepo3 = $repos3[0];
-$secondRepo3 = $repos3[34];
+$secondRepo3 = $repos3[29];
+$thirdRepo3 = $repos3[30];
 
 echo "{$firstRepo3->name}\t{$firstRepo3->full_name}\n"; 
 echo "{$secondRepo3->name}\t{$secondRepo3->full_name}\n"; 
+echo "{$thirdRepo3->name}\t{$thirdRepo3->full_name}\n";
