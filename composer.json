@@ -3,7 +3,7 @@
     "description": "Created for demoing with razorpay. Not for production use.",
     "require": {
         "guzzlehttp/guzzle": "^6.1",
-        "php": "5.5.0"
+        "php": "^5.5.0"
     },
     "license": "MIT",
     "authors": [
