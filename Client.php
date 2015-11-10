@@ -26,12 +26,13 @@ class Client implements \ArrayAccess
 		$response = $http_client->request('GET', '');
 	        $responseJson =	$response->getBody()
 				->getContents();
+
+		$this->_apis = json_decode($responseJson);
 		
 		$this->_paginate = $this->willPaginate($response);
 		if($this->_paginate)
 			$this->_page_nums = $this->getNumOfPages($response);
 
-		$this->_apis = json_decode($responseJson);
 	}
 	
 	public function __get($var)
@@ -64,8 +65,9 @@ class Client implements \ArrayAccess
 
 	public function offsetExists($offset)
 	{
-		return $this->_paginate && 
-			$offset <= self::ITEMS_PER_PAGE * $this->_page_nums;
+		if($this->_paginate)
+			return $offset <= self::ITEMS_PER_PAGE * $this->_page_nums;
+		return false;
 	}
 
 
@@ -78,11 +80,10 @@ class Client implements \ArrayAccess
 	{
 		if(!$this->_paginate)
 			return null;
-		if(isset($this->_apis[$offset]))
-			return $this->_apis[$offset];
 		while(count($this->_apis) < $offset)
 		{
-			$this->_apis = array_merge($this->_apis, $this->_fetchNextPage());
+			$next = $this->fetchNextPage();
+			$this->_apis = array_merge($this->_apis, $next);
 		}
 		
 		return $this->_apis[$offset];
@@ -90,17 +91,21 @@ class Client implements \ArrayAccess
 
 	private function willPaginate($response)
 	{
-		return $response->hasHeader('Link');	
+		return $response->hasHeader('Link') || 
+			is_array($this->_apis);	
 	}
 
 	private function getNumOfPages($response)
 	{
 		$linkHeader = $response->getHeader('Link');
+		if(!$linkHeader && is_array($this->_apis))
+			return 1;
+
 		$this->_paginator = New \Paginatior($linkHeader[0]);
 		return $this->_paginator->getNumOfPages();
 	}
 
-	private function _fetchNextPage()
+	private function fetchNextPage()
 	{
 		$http_client = new \GuzzleHttp\Client([
 			'base_uri' => $this->_paginator->getNextLink()
@@ -121,6 +126,16 @@ $repos = $user->repos();
 
 $firstRepo = $repos[34];
 
-echo $firstRepo->name . "\n";
+echo $firstRepo->name . "\n" . $firstRepo->full_name . "\n"; 
 
-echo $firstRepo->full_name . "\n";
+
+$client2 = new Client('https://api.github.com/');
+
+
+$user2 = $client2->user('spesalvi');
+
+$repos2 = $user2->repos();
+
+$firstRepo2 = $repos2[0];
+
+echo $firstRepo2->name . "\t" . $firstRepo2->full_name . "\n";
