@@ -16,11 +16,11 @@ class Client implements \ArrayAccess
 	private $_page_nums = 0;
 	private $_paginator;
 
-	public function __construct($api_endpoint)
+	public function __construct($url)
 	{
-		if(!$api_endpoint)
+		if(!$url)
 			return;	
-		list($responseJson, $response) = $this->fetchResponse($api_endpoint);
+		list($responseJson, $response) = $this->fetchResponse($url);
 		$this->_apis = json_decode($responseJson);
 		
 		$this->_paginate = $this->willPaginate($response);
@@ -47,7 +47,6 @@ class Client implements \ArrayAccess
 			$url = preg_replace('/{[a-z]+}/', $argument, $url, 1);
 		}
 		return new Client($url);
-
 	}
 
 	public function offsetSet($offset, $value)
@@ -81,10 +80,16 @@ class Client implements \ArrayAccess
 		return $this->_apis[$offset];
 	}
 
-	private function willPaginate($response)
+
+	private function fetchResponse($api_url)
 	{
-		return $response->hasHeader('Link') || 
-			is_array($this->_apis);	
+		$http_client = new \GuzzleHttp\Client([
+			'base_uri' => $api_url,
+		]);
+		$response = $http_client->request('GET', '');
+	        $responseJson =	$response->getBody()
+				->getContents();
+		return array($responseJson, $response);
 	}
 
 	private function getNumOfPages($response)
@@ -97,22 +102,16 @@ class Client implements \ArrayAccess
 		return $this->_paginator->getNumOfPages();
 	}
 
-	private function fetchResponse($api_url)
-	{
-		$http_client = new \GuzzleHttp\Client([
-			'base_uri' => $api_url,
-			'auth' => ['spesalvi', 'S@1aHoy']
-		]);
-		$response = $http_client->request('GET', '');
-	        $responseJson =	$response->getBody()
-				->getContents();
-		return array($responseJson, $response);
-	}
-
 	private function fetchNextPage()
 	{
 		$url = $this->_paginator->getNextLink();
 		list($responseJson, $response) = $this->fetchResponse($url);
 		return json_decode($responseJson);
+	}
+
+	private function willPaginate($response)
+	{
+		return $response->hasHeader('Link') || 
+			is_array($this->_apis);	
 	}
 }
