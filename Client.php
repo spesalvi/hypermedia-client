@@ -20,13 +20,7 @@ class Client implements \ArrayAccess
 	{
 		if(!$api_endpoint)
 			return;	
-		$http_client = new \GuzzleHttp\Client([
-			'base_uri' => $api_endpoint
-		]);
-		$response = $http_client->request('GET', '');
-	        $responseJson =	$response->getBody()
-				->getContents();
-
+		list($responseJson, $response) = $this->fetchResponse($api_endpoint);
 		$this->_apis = json_decode($responseJson);
 		
 		$this->_paginate = $this->willPaginate($response);
@@ -46,9 +40,7 @@ class Client implements \ArrayAccess
 	{
 		$url = $this->_apis->{$name . '_url'};
 		if($url == null)
-		{
 			return;
-		}
 
 		foreach($arguments as $argument)
 		{
@@ -105,14 +97,21 @@ class Client implements \ArrayAccess
 		return $this->_paginator->getNumOfPages();
 	}
 
-	private function fetchNextPage()
+	private function fetchResponse($api_url)
 	{
 		$http_client = new \GuzzleHttp\Client([
-			'base_uri' => $this->_paginator->getNextLink()
+			'base_uri' => $api_url
 		]);
 		$response = $http_client->request('GET', '');
 	        $responseJson =	$response->getBody()
 				->getContents();
+		return array($responseJson, $response);
+	}
+
+	private function fetchNextPage()
+	{
+		$url = $this->_paginator->getNextLink();
+		list($responseJson, $response) = $this->fetchResponse($url);
 		return json_decode($responseJson);
 	}
 }
