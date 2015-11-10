@@ -57,7 +57,7 @@ class Client implements \ArrayAccess
 	public function offsetExists($offset)
 	{
 		if($this->_paginate)
-			return $offset <= self::ITEMS_PER_PAGE * $this->_page_nums;
+			return $offset <= (self::ITEMS_PER_PAGE * $this->_page_nums);
 		return false;
 	}
 
@@ -69,10 +69,10 @@ class Client implements \ArrayAccess
 
 	public function offsetGet($offset)
 	{
-		if(!$this->_paginate)
-			return null;
+		if(!$this->offsetExists($offset) || !$this->_paginate)
+			return null;		
 		$paginator = $this->_paginator;
-		while(count($this->_apis) < $offset)
+		while(count($this->_apis) <= $offset)
 		{
 			list($next, $response) = $this->fetchNextPage($paginator);
 			$this->_apis = array_merge($this->_apis, $next);
