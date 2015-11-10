@@ -71,20 +71,30 @@ class Client implements \ArrayAccess
 	{
 		if(!$this->_paginate)
 			return null;
+		$paginator = $this->_paginator;
 		while(count($this->_apis) < $offset)
 		{
-			$next = $this->fetchNextPage();
+			list($next, $response) = $this->fetchNextPage($paginator);
 			$this->_apis = array_merge($this->_apis, $next);
+
+			$paginator = $this->getPaginator($response);;
 		}
+		$this->_paginator = $paginator;
 		
 		return $this->_apis[$offset];
 	}
 
+	private function fetchNextPage($paginator)
+	{
+		$url = $paginator->getNextLink();
+		list($responseJson, $response) = $this->fetchResponse($url);
+		return array(json_decode($responseJson), $response);
+	}
 
 	private function fetchResponse($api_url)
 	{
 		$http_client = new \GuzzleHttp\Client([
-			'base_uri' => $api_url,
+			'base_uri' => $api_url
 		]);
 		$response = $http_client->request('GET', '');
 	        $responseJson =	$response->getBody()
@@ -94,19 +104,23 @@ class Client implements \ArrayAccess
 
 	private function getNumOfPages($response)
 	{
-		$linkHeader = $response->getHeader('Link');
-		if(!$linkHeader && is_array($this->_apis))
+		$paginator = $this->getPaginator($response);
+		if(!$paginator && is_array($this->_apis))
 			return 1;
 
-		$this->_paginator = New Paginator\Paginator($linkHeader[0]);
+		$this->_paginator = $paginator;
 		return $this->_paginator->getNumOfPages();
 	}
-
-	private function fetchNextPage()
+	
+	private function getPaginator($response)
 	{
-		$url = $this->_paginator->getNextLink();
-		list($responseJson, $response) = $this->fetchResponse($url);
-		return json_decode($responseJson);
+		$linkHeader = $response->getHeader('Link');
+		if(!$linkHeader)
+			return null;
+
+		$paginator = New Paginator\Paginator($linkHeader[0]);
+
+		return $paginator;
 	}
 
 	private function willPaginate($response)
