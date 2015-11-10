@@ -1,8 +1,15 @@
 {
-    "name": "spesalvi/razorpay-hypermedia-client",
-    "description": "Hypermedia client for github api",
-    "require": {
-        "php": ">=5.5.0",
-        "guzzlehttp/guzzle": "~6.0"
-    }
+	"name": "spesalvi/razorpay-hypermedia-client",
+		"description": "Hypermedia client for github api",
+		"require": {
+			"php": ">=5.5.0",
+			"guzzlehttp/guzzle": "~6.0",
+			"spesalvi/razorpay-hypermedia-client" : "dev-master"
+		},
+		"repositories": [
+		{
+			"type" : "vcs",
+			"url" : "https://github.com/spesalvi/hypermedia-client"
+		}
+	]
 }

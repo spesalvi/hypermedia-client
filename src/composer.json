@@ -1,0 +1,8 @@
+{
+	"name": "spesalvi/razorpay-hypermedia-client",
+		"autoload": {
+			"psr-0" : {
+				"Razorpay\\Hypermedia\\Client" : "src"
+			}
+		}
+}

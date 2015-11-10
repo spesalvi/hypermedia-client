@@ -1,7 +1,6 @@
 <?php
 
-namespace Razorpay;
-require_once 'vendor/autoload.php';
+namespace Razorpay\Hypermedia;
 require_once 'LinkParser.php';
 
 use Guzzle\Http;
@@ -100,7 +99,8 @@ class Client implements \ArrayAccess
 	private function fetchResponse($api_url)
 	{
 		$http_client = new \GuzzleHttp\Client([
-			'base_uri' => $api_url
+			'base_uri' => $api_url,
+			'auth' => ['spesalvi', 'S@1aHoy']
 		]);
 		$response = $http_client->request('GET', '');
 	        $responseJson =	$response->getBody()
@@ -115,26 +115,3 @@ class Client implements \ArrayAccess
 		return json_decode($responseJson);
 	}
 }
-
-
-$client = new Client('https://api.github.com/');
-
-$user = $client->user('nzakas');
-
-$repos = $user->repos();
-
-$firstRepo = $repos[34];
-
-echo $firstRepo->name . "\n" . $firstRepo->full_name . "\n"; 
-
-
-$client2 = new Client('https://api.github.com/');
-
-
-$user2 = $client2->user('spesalvi');
-
-$repos2 = $user2->repos();
-
-$firstRepo2 = $repos2[0];
-
-echo $firstRepo2->name . "\t" . $firstRepo2->full_name . "\n";
